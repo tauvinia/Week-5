@@ -139,8 +139,25 @@ p <- ggplot(joined) +
                aes(x = E_rosa, y = N_rosa, xend = E_sabi, yend = N_sabi), color ="black") +
   coord_equal()
 
-
+meetingpoints <- joined |>
+  filter(meet) |>
+  mutate(
+   E.mean = (E_rosa + E_sabi) / 2,
+   N.mean = (N_rosa + N_sabi) / 2
+)
 
 library (plotly)
 ggplotly(p)  
 
+joined |>
+  filter(DatetimeRound < "2015-04-04") |>
+  plot_ly (x=~E_rosa, y=~N_rosa, z=~DatetimeRound, type ="scatter3d", mode="lines" ) |>
+  add_trace(joined, x = x=~E_sabi, y=~N_sabi, z=~DatetimeRound) |>
+  add_markers(data=meetingpoints, x= ~E.mean, y= ~N.mean, z= ~DatetimeRound) |>
+  layout(scene=list(
+    xaxis = list(title = "E"),
+    yaxis = list(title = "N"),
+    zaxis = list(title = "Time")
+
+  ))
+  
